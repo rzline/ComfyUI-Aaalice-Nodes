@@ -11,8 +11,14 @@ from pathlib import Path
 from uuid import uuid4
 
 from krita import Extension, Krita
-from PyQt5.QtCore import QByteArray, QTimer
-from PyQt5.QtGui import QImage
+try:
+    from PyQt5.QtCore import QByteArray, QTimer
+except ModuleNotFoundError:
+    from PyQt6.QtCore import QByteArray, QTimer
+try:
+    from PyQt5.QtGui import QImage
+except ModuleNotFoundError:
+    from PyQt6.QtGui import QImage
 
 PROTOCOL_VERSION = 1
 BRIDGE_VERSION = "1.2.0"
@@ -202,7 +208,7 @@ class AaaliceComfyBridgeExtension(Extension):
         pixels = document.pixelData(0, 0, width, height)
         if not pixels or pixels.size() != width * height * 4:
             raise RuntimeError("Krita returned an invalid active-document projection")
-        image = QImage(pixels, width, height, width * 4, QImage.Format_ARGB32)
+        image = QImage(pixels, width, height, width * 4, QImage.Format.Format_ARGB32)
         if image.isNull() or not image.save(str(path), "PNG"):
             raise RuntimeError("Krita could not export the active-document projection")
 
@@ -212,6 +218,6 @@ class AaaliceComfyBridgeExtension(Extension):
         if not pixels or pixels.size() != width * height:
             raise RuntimeError("Krita returned an invalid selection mask")
         buffer = QByteArray(pixels)
-        image = QImage(buffer, width, height, width, QImage.Format_Grayscale8)
+        image = QImage(buffer, width, height, width, QImage.Format.Format_Grayscale8)
         if image.isNull() or not image.save(str(path), "PNG"):
             raise RuntimeError("Krita could not export the current selection")
