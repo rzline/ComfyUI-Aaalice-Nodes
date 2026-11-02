@@ -46,7 +46,8 @@ test("bestRebindMatch prefers the candidate matching both title and identity ove
 		{ title: "反推模型", description: "图像反推", identityLabel: "model_name" },
 	]);
 	assert.equal(match.index, 1);
-	assert.equal(match.exact, false);
+	assert.equal(match.exact, true);
+	assert.equal(Boolean(match.ambiguous), false);
 });
 
 test("bestRebindMatch falls back to the item label when an override title hides the parameter name", () => {
@@ -63,3 +64,35 @@ test("bestRebindMatch returns null when nothing matches", () => {
 	]), null);
 	assert.equal(bestRebindMatch({ preferredLabel: "x", identityLabel: "x" }, []), null);
 });
+
+test("bestRebindMatch prefers candidate matching preferred group when titles are identical", () => {
+	const candidates = [
+		{ title: "steps", description: "KSampler", identityLabel: "steps", groupName: "快速草稿组" },
+		{ title: "steps", description: "KSampler", identityLabel: "steps", groupName: "最终精修组" },
+	];
+	const match = bestRebindMatch({
+		preferredLabel: "steps",
+		identityLabel: "steps",
+		preferredGroup: "最终精修组",
+	}, candidates);
+
+	assert.equal(match.index, 1);
+	assert.equal(match.score, 1000);
+	assert.equal(Boolean(match.ambiguous), false);
+});
+
+test("bestRebindMatch marks identical candidates with no differentiating group as ambiguous", () => {
+	const candidates = [
+		{ title: "steps", description: "KSampler", identityLabel: "steps" },
+		{ title: "steps", description: "KSampler", identityLabel: "steps" },
+	];
+	const match = bestRebindMatch({
+		preferredLabel: "steps",
+		identityLabel: "steps",
+	}, candidates);
+
+	assert.equal(match.score, 1000);
+	assert.equal(match.exact, false);
+	assert.equal(match.ambiguous, true);
+});
+

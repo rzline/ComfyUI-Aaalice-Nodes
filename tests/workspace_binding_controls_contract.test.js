@@ -10,6 +10,7 @@ const source = (path) => readFileSync(join(ROOT, ...path.split("/")), "utf8");
 const workspace = [
 	"workspace.js", "workspace/dashboard_bindings.js", "workspace/dashboard_linking.js", "workspace/dashboard_unbinding.js",
 	"workspace/dashboard_view.js", "workspace/dashboard_batch_rebind.js", "workspace/labels.js", "workspace/library.js", "workspace/value_profiles.js",
+	"workspace/dashboard_presets.js", "workspace/dashboard_preset_duplicate.js", "lib/value_profile_application.js",
 ].map((path) => source(`js/${path}`)).join("\n");
 const selector = source("js/prompt_selector.js");
 const rebindMatch = source("js/lib/rebind_match.js");
@@ -156,7 +157,7 @@ test("adjustment profiles use source-grouped card rules and one stable scroll su
 	assert.match(workspace, /item\.kind !== "control" \|\| !item\.binding/);
 	assert.match(workspace, /bindingKey\(item\.binding\)/);
 	assert.match(workspace, /linkedCount: Math\.max\(0, controlItemBindings\(item\)\.length - 1\)/);
-	assert.match(workspace, /controlItemBindings\(match\.candidate\.item\)/);
+	assert.match(workspace, /controlItemBindings\(item\)/);
 	assert.match(workspace, /available = candidates\.filter\(\(candidate\) => !taken\.has\(candidate\.key\)\)/);
 	assert.match(workspace, /const groupMatches = \(matches\) =>/);
 	assert.match(workspace, /aa-value-profile-group__header/);
@@ -169,15 +170,18 @@ test("adjustment profiles use source-grouped card rules and one stable scroll su
 	assert.match(workspace, /duplicateValueProfile\(current, profile\.id, name\)/);
 	assert.match(workspace, /selectedId = next\.profiles\[next\.profiles\.length - 1\]\.id/);
 	assert.match(workspace, /const nextState = mutator\(state\);[\s\S]*?saveValueProfiles\(nextState\);[\s\S]*?state = nextState/);
-	assert.match(workspace, /applyCount/);
-	assert.match(workspace, /resolved\.kind === "text" && typeof rule\.payload === "string"/);
+	assert.match(workspace, /duplicateAndApplyBtn/);
+	assert.match(workspace, /createValueProfileEditor\(rule, match,/);
+	assert.match(workspace, /redraw: false/);
+	assert.match(source("js/workspace/value_profile_editor.js"), /createSharedControl\(spec\(\),/);
+	assert.match(source("js/lib/controls/text.js"), /spec\.options\.multiline \? document\.createElement\("textarea"\)/);
 	assert.match(theme, /\.aa-value-profile-rule__linked/);
 	assert.match(theme, /\.aa-value-profiles__surface \{[\s\S]*?grid-template-rows: auto minmax\(0, 1fr\)/);
 	assert.match(theme, /\.aa-value-profile-rules \{[\s\S]*?overflow-y: auto;/);
 	assert.match(theme, /\.aa-value-profile-group \{[\s\S]*?--aa-value-profile-tone:/);
-	assert.match(theme, /\.aa-value-profile-rule \{[\s\S]*?grid-template-columns: minmax\(150px, 1fr\) minmax\(210px, \.76fr\) 68px;/);
-	assert.match(theme, /@container \(max-width: 700px\)[\s\S]*?\.aa-value-profile-rule \{/);
-	assert.match(theme, /@container \(max-width: 560px\)[\s\S]*?\.aa-value-profiles__profile \{[\s\S]*?padding-right: 142px;/);
+	assert.match(theme, /\.aa-value-profile-group__rows \{[\s\S]*?grid-template-columns: repeat\(auto-fill, minmax\(240px, 1fr\)\);/);
+	assert.match(theme, /\.aa-value-profile-rule \{[\s\S]*?display: flex;/);
+	assert.match(theme, /\.aa-value-profile-rule__drag-handle/);
 	assert.match(workspace, /initialQuery: pickerSearch/);
 	assert.match(workspace, /onSearchChange: \(query\) => \{ pickerSearch = query; \}/);
 	assert.match(workspace, /let rulesScrollTop = 0/);

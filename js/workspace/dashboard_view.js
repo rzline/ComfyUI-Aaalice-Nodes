@@ -29,7 +29,7 @@ export function renderDashboard(container, host) {
 		applyDashboardPreset, createCurrentDashboardPreset, updateCurrentDashboardPreset, duplicateCurrentDashboardPreset,
 		openValueProfiles,
 		renameCurrentDashboardPreset, reorderDashboardPreset, deleteCurrentDashboardPreset, addPage, mounted, captureDashboardPageSnapshots,
-		dashboardPageRails, registerDashboardPresetView, workspaceLabels, openDashboardExport, importDashboardPreset, openEditGroup,
+		dashboardPageRails, registerDashboardPresetView, workspaceLabels, openEditGroup,
 		openComponentNoteEditor, numericRangeForControl, flushDeferredWorkspaceRender, notifyWorkspaceImageUpload,
 		notifyControlBindingError, openManageLinkedBindings, openRebind, controlTitle, openCardActions, openMoveControl,
 		openAssignGroup, resolve, syncDashboardSourceGroup, dashboardColumnsForWorkspaceWidth, dashboardScrollState,
@@ -246,11 +246,10 @@ export function renderDashboard(container, host) {
 		iconButton({ iconName: "layout", label: t("aaalice.workspace.layout.compact", "Tidy layout"), variant: "ghost", className: "aa-dashboard-tidy-layout", onClick: () => updateDashboard((current) => compactDashboard(current, page.id)) }),
 	].filter(Boolean) : [];
 	const utilityActions = editMode ? [] : [
-		iconButton({ iconName: "sliders", label: t("aaalice.workspace.valueProfiles.open", "Adjustment profiles"), variant: "ghost", size: "sm", className: "aa-dashboard-toolbar-action aa-dashboard-value-profiles", onClick: () => openValueProfiles() }),
-		button({ iconName: "upload", label: t("aaalice.workspace.preset.export", "Export preset"), variant: "ghost", size: "sm", className: "aa-dashboard-toolbar-action", onClick: () => openDashboardExport(model) }),
-		button({ iconName: "download", label: t("aaalice.workspace.preset.import", "Import preset"), variant: "ghost", size: "sm", className: "aa-dashboard-toolbar-action", onClick: () => pickFile(".json,application/json", importDashboardPreset) }),
+		button({ iconName: "sliders", label: t("aaalice.workspace.valueProfiles.manageBtn", "Override profile management"), variant: "ghost", size: "sm", className: "aa-dashboard-toolbar-action aa-dashboard-value-profiles", onClick: () => openValueProfiles() }),
 		search.toggle,
 	];
+
 	const pageSettingsButton = page ? iconButton({
 		iconName: "settings", label: t("aaalice.workspace.page.settings", "Page settings"), variant: "ghost", className: "aa-dashboard-page-settings",
 		onClick: (event) => { const rect = event.currentTarget.getBoundingClientRect(); openPageMenu(rect.right, rect.bottom); },
